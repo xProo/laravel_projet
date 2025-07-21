@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -49,6 +50,20 @@ Route::middleware('auth')->group(function () {
     // Routes protégées pour l'administration (CRUD complet)
     Route::resource('admin/products', ProductController::class)->except(['index', 'show']);
     Route::resource('admin/categories', CategoryController::class)->except(['index', 'show']);
+});
+
+// Routes d'administration
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::get('/orders', [AdminController::class, 'orders'])->name('orders');
+    Route::get('/orders/{order}', [AdminController::class, 'showOrder'])->name('orders.show');
+    Route::patch('/orders/{order}/status', [AdminController::class, 'updateOrderStatus'])->name('orders.update-status');
+    Route::patch('/users/{user}/toggle-admin', [AdminController::class, 'toggleAdminStatus'])->name('users.toggle-admin');
+    
+    // Routes CRUD pour les produits et catégories
+    Route::resource('products', ProductController::class);
+    Route::resource('categories', CategoryController::class);
 });
 
 require __DIR__.'/auth.php';

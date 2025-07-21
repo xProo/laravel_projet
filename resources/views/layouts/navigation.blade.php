@@ -34,6 +34,11 @@
                         <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
                             📋 Mes commandes
                         </x-nav-link>
+                        @if(Auth::user()->isAdmin())
+                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                            ⚙️ Administration
+                        </x-nav-link>
+                        @endif
                     @endauth
                 </div>
             </div>
@@ -120,6 +125,11 @@
                 <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
                     📋 Mes commandes
                 </x-responsive-nav-link>
+                @if(Auth::user()->isAdmin())
+                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                    ⚙️ Administration
+                </x-responsive-nav-link>
+                @endif
             @endauth
         </div>
 

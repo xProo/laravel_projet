@@ -13,6 +13,12 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::withCount('products')->paginate(10);
+        
+        // Si on est dans l'admin, utiliser la vue admin
+        if (request()->routeIs('admin.*')) {
+            return view('admin.categories.index', compact('categories'));
+        }
+        
         return view('categories.index', compact('categories'));
     }
 
@@ -21,6 +27,11 @@ class CategoryController extends Controller
      */
     public function create()
     {
+        // Si on est dans l'admin, utiliser la vue admin
+        if (request()->routeIs('admin.*')) {
+            return view('admin.categories.create');
+        }
+        
         return view('categories.create');
     }
 
@@ -44,6 +55,11 @@ class CategoryController extends Controller
 
         Category::create($data);
 
+        // Rediriger vers la bonne route selon le contexte
+        if (request()->routeIs('admin.*')) {
+            return redirect()->route('admin.categories.index')->with('success', 'Catégorie créée avec succès !');
+        }
+
         return redirect()->route('categories.index')->with('success', 'Catégorie créée avec succès !');
     }
 
@@ -61,6 +77,11 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
+        // Si on est dans l'admin, utiliser la vue admin
+        if (request()->routeIs('admin.*')) {
+            return view('admin.categories.edit', compact('category'));
+        }
+        
         return view('categories.edit', compact('category'));
     }
 
@@ -84,6 +105,11 @@ class CategoryController extends Controller
 
         $category->update($data);
 
+        // Rediriger vers la bonne route selon le contexte
+        if (request()->routeIs('admin.*')) {
+            return redirect()->route('admin.categories.index')->with('success', 'Catégorie mise à jour avec succès !');
+        }
+
         return redirect()->route('categories.index')->with('success', 'Catégorie mise à jour avec succès !');
     }
 
@@ -93,10 +119,22 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         if ($category->products()->count() > 0) {
-            return redirect()->route('categories.index')->with('error', 'Impossible de supprimer une catégorie qui contient des produits !');
+            $errorMessage = 'Impossible de supprimer une catégorie qui contient des produits !';
+            
+            if (request()->routeIs('admin.*')) {
+                return redirect()->route('admin.categories.index')->with('error', $errorMessage);
+            }
+            
+            return redirect()->route('categories.index')->with('error', $errorMessage);
         }
 
         $category->delete();
+        
+        // Rediriger vers la bonne route selon le contexte
+        if (request()->routeIs('admin.*')) {
+            return redirect()->route('admin.categories.index')->with('success', 'Catégorie supprimée avec succès !');
+        }
+
         return redirect()->route('categories.index')->with('success', 'Catégorie supprimée avec succès !');
     }
 }

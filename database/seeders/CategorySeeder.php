@@ -15,28 +15,28 @@ class CategorySeeder extends Seeder
     {
         $categories = [
             [
-                'name' => 'Énergisants',
-                'description' => 'Des boosters d\'énergie pour survivre aux réunions ennuyeuses',
-                'image' => null
-            ],
-            [
-                'name' => 'Relaxants',
-                'description' => 'Pour se détendre après une journée de code qui ne marche pas',
+                'name' => 'Cannabis',
+                'description' => 'Produits dérivés du cannabis pour la relaxation et le bien-être',
                 'image' => null
             ],
             [
                 'name' => 'Stimulants',
-                'description' => 'Pour rester éveillé pendant les nuits de debug',
+                'description' => 'Substances stimulantes pour l\'énergie et la concentration',
                 'image' => null
             ],
             [
-                'name' => 'Confort',
-                'description' => 'Produits pour améliorer votre confort de développeur',
+                'name' => 'Hallucinogènes',
+                'description' => 'Substances psychédéliques pour l\'exploration de la conscience',
+                'image' => null
+            ],
+            [
+                'name' => 'Opiacés',
+                'description' => 'Produits dérivés de l\'opium pour la gestion de la douleur',
                 'image' => null
             ],
             [
                 'name' => 'Accessoires',
-                'description' => 'Tout ce qu\'il faut pour un setup de dev parfait',
+                'description' => 'Tout le matériel nécessaire pour la consommation',
                 'image' => null
             ]
         ];

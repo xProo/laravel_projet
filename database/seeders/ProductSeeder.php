@@ -14,109 +14,181 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         $products = [
-            // Énergisants (category_id = 1)
+            // Cannabis (category_id = 16)
             [
-                'name' => 'Red Bull de la Rue',
-                'description' => 'Énergie pure pour survivre aux réunions de 3h qui auraient pu être un email',
-                'price' => 4.99,
-                'stock' => 50,
-                'category_id' => 1,
-                'image' => null
-            ],
-            [
-                'name' => 'Monster du Coin',
-                'description' => 'Pour quand tu dois coder jusqu\'à 3h du mat\' et que tu as un meeting à 9h',
-                'price' => 3.99,
-                'stock' => 30,
-                'category_id' => 1,
-                'image' => null
-            ],
-            [
-                'name' => 'Café Triple Expresso',
-                'description' => 'Le café qui te fait trembler les mains mais au moins tu codes vite',
-                'price' => 2.50,
-                'stock' => 100,
-                'category_id' => 1,
-                'image' => null
-            ],
-
-            // Relaxants (category_id = 2)
-            [
-                'name' => 'Thé du Dimanche',
-                'description' => 'Pour se détendre après avoir cassé la prod un vendredi soir',
-                'price' => 1.99,
-                'stock' => 75,
-                'category_id' => 2,
-                'image' => null
-            ],
-            [
-                'name' => 'Café Décaféiné',
-                'description' => 'Pour faire semblant de boire du café sans l\'effet secondaire',
-                'price' => 2.99,
-                'stock' => 40,
-                'category_id' => 2,
-                'image' => null
-            ],
-            [
-                'name' => 'Infusion Debug',
-                'description' => 'Calme tes nerfs après 6h à chercher pourquoi ça marche pas',
-                'price' => 3.50,
-                'stock' => 60,
-                'category_id' => 2,
-                'image' => null
-            ],
-
-            // Stimulants (category_id = 3)
-            [
-                'name' => 'Vitamine C en Cachet',
-                'description' => 'Pour booster ton système immunitaire contre les bugs',
-                'price' => 8.99,
-                'stock' => 25,
-                'category_id' => 3,
-                'image' => null
-            ],
-            [
-                'name' => 'Complément Alimentaire Dev',
-                'description' => 'Toutes les vitamines dont un développeur a besoin',
+                'name' => 'Herbe de Qualité',
+                'description' => 'Cannabis premium pour une expérience relaxante optimale',
                 'price' => 15.99,
+                'stock' => 50,
+                'category_id' => 16,
+                'image' => null
+            ],
+            [
+                'name' => 'Hash Marocain',
+                'description' => 'Hashish traditionnel du Maroc, goût authentique',
+                'price' => 12.99,
+                'stock' => 30,
+                'category_id' => 16,
+                'image' => null
+            ],
+            [
+                'name' => 'Huile de CBD',
+                'description' => 'Huile de CBD pure pour le bien-être sans effet psychoactif',
+                'price' => 25.50,
+                'stock' => 100,
+                'category_id' => 16,
+                'image' => null
+            ],
+            [
+                'name' => 'Space Cake',
+                'description' => 'Gâteau au cannabis fait maison, effet progressif',
+                'price' => 8.99,
                 'stock' => 20,
-                'category_id' => 3,
+                'category_id' => 16,
                 'image' => null
             ],
 
-            // Confort (category_id = 4)
+            // Stimulants (category_id = 17)
             [
-                'name' => 'Coussin de Bureau',
-                'description' => 'Pour ton dos qui souffre de 8h assis devant l\'écran',
-                'price' => 29.99,
+                'name' => 'Cocaïne Pure',
+                'description' => 'Cocaïne de qualité premium pour l\'énergie et la concentration',
+                'price' => 80.00,
+                'stock' => 25,
+                'category_id' => 17,
+                'image' => null
+            ],
+            [
+                'name' => 'Crack Premium',
+                'description' => 'Crack de haute qualité pour un effet immédiat',
+                'price' => 45.00,
                 'stock' => 15,
-                'category_id' => 4,
+                'category_id' => 17,
                 'image' => null
             ],
             [
-                'name' => 'Lunettes Anti-Fatigue',
-                'description' => 'Protège tes yeux des écrans qui te rendent aveugle',
-                'price' => 45.99,
+                'name' => 'Méthamphétamine',
+                'description' => 'Crystal meth pour une énergie extrême et durable',
+                'price' => 120.00,
                 'stock' => 10,
-                'category_id' => 4,
+                'category_id' => 17,
+                'image' => null
+            ],
+            [
+                'name' => 'Ecstasy MDMA',
+                'description' => 'Pilules d\'ecstasy pour l\'euphorie et l\'empathie',
+                'price' => 15.00,
+                'stock' => 40,
+                'category_id' => 17,
                 'image' => null
             ],
 
-            // Accessoires (category_id = 5)
+            // Hallucinogènes (category_id = 18)
             [
-                'name' => 'Clavier Mécanique',
-                'description' => 'Le clic-clac qui agace tes collègues mais te rend heureux',
-                'price' => 89.99,
-                'stock' => 8,
-                'category_id' => 5,
+                'name' => 'LSD Blotters',
+                'description' => 'Acide lysergique diéthylamide sur papier, voyages psychédéliques',
+                'price' => 10.00,
+                'stock' => 60,
+                'category_id' => 18,
                 'image' => null
             ],
             [
-                'name' => 'Souris Gaming',
-                'description' => 'Pour naviguer dans ton code comme un pro gamer',
-                'price' => 59.99,
+                'name' => 'Champignons Magiques',
+                'description' => 'Psilocybine naturelle pour l\'exploration de la conscience',
+                'price' => 20.00,
+                'stock' => 35,
+                'category_id' => 18,
+                'image' => null
+            ],
+            [
+                'name' => 'DMT Cristal',
+                'description' => 'Diméthyltryptamine pure pour des voyages brefs mais intenses',
+                'price' => 50.00,
+                'stock' => 20,
+                'category_id' => 18,
+                'image' => null
+            ],
+            [
+                'name' => 'Kétamine',
+                'description' => 'Dissociatif pour l\'exploration des états de conscience',
+                'price' => 35.00,
+                'stock' => 30,
+                'category_id' => 18,
+                'image' => null
+            ],
+
+            // Opiacés (category_id = 19)
+            [
+                'name' => 'Héroïne Blanche',
+                'description' => 'Héroïne pure pour la gestion de la douleur et la relaxation',
+                'price' => 100.00,
+                'stock' => 15,
+                'category_id' => 19,
+                'image' => null
+            ],
+            [
+                'name' => 'Morphine',
+                'description' => 'Morphine pharmaceutique pour le soulagement de la douleur',
+                'price' => 75.00,
+                'stock' => 25,
+                'category_id' => 19,
+                'image' => null
+            ],
+            [
+                'name' => 'Oxycodone',
+                'description' => 'Analgésique opioïde pour la douleur chronique',
+                'price' => 60.00,
+                'stock' => 20,
+                'category_id' => 19,
+                'image' => null
+            ],
+            [
+                'name' => 'Fentanyl',
+                'description' => 'Opioïde synthétique très puissant, usage médical',
+                'price' => 150.00,
+                'stock' => 8,
+                'category_id' => 19,
+                'image' => null
+            ],
+
+            // Accessoires (category_id = 20)
+            [
+                'name' => 'Bong en Verre',
+                'description' => 'Bong de qualité pour une consommation optimale',
+                'price' => 45.99,
                 'stock' => 12,
-                'category_id' => 5,
+                'category_id' => 20,
+                'image' => null
+            ],
+            [
+                'name' => 'Pipe à Crack',
+                'description' => 'Pipe spécialisée pour la consommation de crack',
+                'price' => 15.00,
+                'stock' => 25,
+                'category_id' => 20,
+                'image' => null
+            ],
+            [
+                'name' => 'Seringues Stériles',
+                'description' => 'Seringues à usage unique pour injection sécurisée',
+                'price' => 5.00,
+                'stock' => 100,
+                'category_id' => 20,
+                'image' => null
+            ],
+            [
+                'name' => 'Balance de Précision',
+                'description' => 'Balance digitale pour peser vos substances avec précision',
+                'price' => 25.00,
+                'stock' => 15,
+                'category_id' => 20,
+                'image' => null
+            ],
+            [
+                'name' => 'Test Kit',
+                'description' => 'Kit de test pour vérifier la pureté de vos substances',
+                'price' => 30.00,
+                'stock' => 20,
+                'category_id' => 20,
                 'image' => null
             ]
         ];

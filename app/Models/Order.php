@@ -13,16 +13,15 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
-        'total',
+        'total_amount',
         'status',
         'address',
-        'payment_method',
-        'payment_reference',
+        'payment_intent_id',
         'paid_at',
     ];
 
     protected $casts = [
-        'total' => 'decimal:2',
+        'total_amount' => 'decimal:2',
         'paid_at' => 'datetime',
     ];
 
@@ -31,29 +30,24 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function orderItems(): HasMany
+    public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    public function isPaid()
+    /**
+     * Vérifier si la commande est payée
+     */
+    public function isPaid(): bool
     {
-        return $this->status === 'paid';
+        return $this->status === 'paid' && $this->paid_at !== null;
     }
 
-    public function isPending()
+    /**
+     * Vérifier si la commande peut être payée
+     */
+    public function canBePaid(): bool
     {
-        return $this->status === 'pending';
-    }
-
-    public function getStatusLabelAttribute()
-    {
-        return match($this->status) {
-            'pending' => 'En attente',
-            'paid' => 'Payée',
-            'completed' => 'Terminée',
-            'cancelled' => 'Annulée',
-            default => ucfirst($this->status)
-        };
+        return in_array($this->status, ['pending', 'payment_failed']);
     }
 }

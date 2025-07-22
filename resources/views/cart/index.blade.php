@@ -45,7 +45,7 @@
                                             <form action="{{ route('cart.update', $item['product']) }}" method="POST" class="flex items-center space-x-2">
                                                 @csrf
                                                 @method('PUT')
-                                                <select name="quantity" onchange="this.form.submit()" class="border border-gray-300 rounded px-2 py-1 text-sm">
+                                                <select name="quantity" onchange="this.form.submit()" class="border border-gray-300 rounded px-2 pr-6 py-1 text-sm">
                                                     @for($i = 1; $i <= min(10, $item['product']->stock); $i++)
                                                         <option value="{{ $i }}" {{ $item['quantity'] == $i ? 'selected' : '' }}>
                                                             {{ $i }}

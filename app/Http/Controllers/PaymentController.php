@@ -3,26 +3,46 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Services\StripeService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
+    protected $stripeService;
+
+    public function __construct(StripeService $stripeService)
+    {
+        $this->stripeService = $stripeService;
+    }
+
     /**
-     * Afficher le formulaire de paiement
+     * Afficher la page de paiement
      */
     public function show(Order $order)
     {
-        // Vérifier que l'utilisateur peut payer cette commande
+        // Vérifier que l'utilisateur est propriétaire de la commande
         if ($order->user_id !== auth()->id()) {
             abort(403);
         }
 
-        if ($order->status !== 'pending') {
-            return redirect()->route('orders.show', $order)->with('error', 'Cette commande ne peut plus être payée.');
+        // Vérifier que la commande n'est pas déjà payée
+        if ($order->status === 'paid') {
+            return redirect()->route('orders.show', $order)->with('info', 'Cette commande a déjà été payée.');
         }
 
-        return view('payments.show', compact('order'));
+        // Créer un PaymentIntent
+        $result = $this->stripeService->createPaymentIntent($order);
+
+        if (!$result['success']) {
+            return back()->with('error', 'Erreur lors de l\'initialisation du paiement: ' . $result['error']);
+        }
+
+        return view('payments.show', [
+            'order' => $order,
+            'clientSecret' => $result['client_secret'],
+            'stripeKey' => config('services.stripe.key'),
+        ]);
     }
 
     /**
@@ -30,92 +50,64 @@ class PaymentController extends Controller
      */
     public function process(Request $request, Order $order)
     {
-        // Vérifier que l'utilisateur peut payer cette commande
+        // Vérifier que l'utilisateur est propriétaire de la commande
         if ($order->user_id !== auth()->id()) {
             abort(403);
         }
 
-        if ($order->status !== 'pending') {
-            return redirect()->route('orders.show', $order)->with('error', 'Cette commande ne peut plus être payée.');
-        }
-
-        // Nettoyer le numéro de carte des espaces
-        $cardNumber = str_replace(' ', '', $request->card_number);
-
         $request->validate([
-            'card_number' => 'required|string|min:16|max:19', // Accepter avec ou sans espaces
-            'expiry_month' => 'required|integer|between:1,12',
-            'expiry_year' => 'required|integer|min:' . date('Y'),
-            'cvv' => 'required|string|size:3',
-            'cardholder_name' => 'required|string|min:3',
+            'payment_intent_id' => 'required|string',
         ]);
 
-        // Vérifier que le numéro de carte fait exactement 16 chiffres après nettoyage
-        if (!preg_match('/^\d{16}$/', $cardNumber)) {
-            return back()->withErrors(['card_number' => 'Le numéro de carte doit contenir exactement 16 chiffres.'])->withInput();
-        }
+        $paymentIntentId = $request->input('payment_intent_id');
 
-        // Simulation de traitement de paiement
-        try {
-            DB::beginTransaction();
+        // Confirmer le paiement
+        $result = $this->stripeService->confirmPaymentIntent($paymentIntentId);
 
-            // Simuler un délai de traitement
-            sleep(1);
+        if ($result['success']) {
+            // Mettre à jour le statut de la commande
+            $order->update([
+                'status' => 'paid',
+                'payment_intent_id' => $paymentIntentId,
+                'paid_at' => now(),
+            ]);
 
-            // Simuler une validation de carte (pour la démo, on accepte tout)
-            $lastFour = substr($cardNumber, -4);
-            
-            // Simuler différents types de cartes
-            $cardType = $this->getCardType($cardNumber);
-            
-            // Simuler un succès de paiement (90% de chance)
-            $paymentSuccess = rand(1, 10) <= 9; // 90% de succès
+            // Vider le panier
+            session()->forget('cart');
 
-            if ($paymentSuccess) {
-                // Mettre à jour le statut de la commande
-                $order->update([
-                    'status' => 'paid',
-                    'payment_method' => $cardType,
-                    'payment_reference' => 'PAY-' . strtoupper(uniqid()),
-                    'paid_at' => now(),
-                ]);
+            return redirect()->route('payments.success', $order)
+                ->with('success', 'Paiement effectué avec succès !');
+        } else {
+            Log::error('Erreur de paiement Stripe', [
+                'order_id' => $order->id,
+                'payment_intent_id' => $paymentIntentId,
+                'error' => $result['error'],
+            ]);
 
-                DB::commit();
-
-                // Rediriger vers l'historique des commandes avec un message de succès
-                return redirect()->route('orders.index')
-                    ->with('success', '🎉 Paiement traité avec succès ! Votre commande #' . $order->id . ' a été confirmée et sera livrée bientôt.');
-
-            } else {
-                // Simuler un échec de paiement
-                DB::rollBack();
-                
-                return back()->with('error', '❌ Paiement refusé. Veuillez vérifier vos informations de carte ou essayer une autre carte.');
-            }
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Erreur lors du traitement du paiement. Veuillez réessayer.');
+            return redirect()->route('payments.failure', $order)
+                ->with('error', 'Erreur lors du paiement: ' . $result['error']);
         }
     }
 
     /**
-     * Page de succès de paiement (plus utilisée, redirection directe vers l'historique)
+     * Page de succès
      */
     public function success(Order $order)
     {
+        // Vérifier que l'utilisateur est propriétaire de la commande
         if ($order->user_id !== auth()->id()) {
             abort(403);
         }
 
-        return redirect()->route('orders.index')->with('success', 'Paiement traité avec succès !');
+        return view('payments.success', compact('order'));
     }
 
     /**
-     * Page d'échec de paiement
+     * Page d'échec
      */
     public function failure(Order $order)
     {
+        // Vérifier que l'utilisateur est propriétaire de la commande
         if ($order->user_id !== auth()->id()) {
             abort(403);
         }
@@ -124,24 +116,86 @@ class PaymentController extends Controller
     }
 
     /**
-     * Déterminer le type de carte basé sur le numéro
+     * Webhook Stripe pour les événements de paiement
      */
-    private function getCardType($cardNumber)
+    public function webhook(Request $request)
     {
-        $firstDigit = substr($cardNumber, 0, 1);
-        $firstTwoDigits = substr($cardNumber, 0, 2);
-        $firstFourDigits = substr($cardNumber, 0, 4);
+        $payload = $request->getContent();
+        $sigHeader = $request->header('Stripe-Signature');
+        $endpointSecret = config('services.stripe.webhook.secret');
 
-        if ($firstDigit === '4') {
-            return 'Visa';
-        } elseif (in_array($firstTwoDigits, ['51', '52', '53', '54', '55'])) {
-            return 'Mastercard';
-        } elseif (in_array($firstFourDigits, ['6011', '644', '645', '646', '647', '648', '649', '65'])) {
-            return 'Discover';
-        } elseif (in_array($firstTwoDigits, ['34', '37'])) {
-            return 'American Express';
-        } else {
-            return 'Carte bancaire';
+        try {
+            $event = \Stripe\Webhook::constructEvent(
+                $payload,
+                $sigHeader,
+                $endpointSecret
+            );
+        } catch (\UnexpectedValueException $e) {
+            Log::error('Webhook Stripe: Invalid payload', ['error' => $e->getMessage()]);
+            return response('Invalid payload', 400);
+        } catch (\Stripe\Exception\SignatureVerificationException $e) {
+            Log::error('Webhook Stripe: Invalid signature', ['error' => $e->getMessage()]);
+            return response('Invalid signature', 400);
+        }
+
+        // Traiter les événements
+        switch ($event->type) {
+            case 'payment_intent.succeeded':
+                $this->handlePaymentSucceeded($event->data->object);
+                break;
+            case 'payment_intent.payment_failed':
+                $this->handlePaymentFailed($event->data->object);
+                break;
+            default:
+                Log::info('Webhook Stripe: Event non géré', ['type' => $event->type]);
+        }
+
+        return response('Webhook handled', 200);
+    }
+
+    /**
+     * Gérer un paiement réussi
+     */
+    private function handlePaymentSucceeded($paymentIntent)
+    {
+        $orderId = $paymentIntent->metadata->order_id ?? null;
+        
+        if ($orderId) {
+            $order = Order::find($orderId);
+            if ($order) {
+                $order->update([
+                    'status' => 'paid',
+                    'payment_intent_id' => $paymentIntent->id,
+                    'paid_at' => now(),
+                ]);
+
+                Log::info('Paiement confirmé via webhook', [
+                    'order_id' => $orderId,
+                    'payment_intent_id' => $paymentIntent->id,
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Gérer un paiement échoué
+     */
+    private function handlePaymentFailed($paymentIntent)
+    {
+        $orderId = $paymentIntent->metadata->order_id ?? null;
+        
+        if ($orderId) {
+            $order = Order::find($orderId);
+            if ($order) {
+                $order->update([
+                    'status' => 'payment_failed',
+                ]);
+
+                Log::info('Paiement échoué via webhook', [
+                    'order_id' => $orderId,
+                    'payment_intent_id' => $paymentIntent->id,
+                ]);
+            }
         }
     }
 }

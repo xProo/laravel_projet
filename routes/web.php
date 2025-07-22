@@ -66,4 +66,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('categories', CategoryController::class);
 });
 
+// Webhook Stripe (pas de middleware auth car Stripe doit pouvoir y accéder)
+Route::post('/stripe/webhook', [PaymentController::class, 'webhook'])->name('stripe.webhook');
+
 require __DIR__.'/auth.php';

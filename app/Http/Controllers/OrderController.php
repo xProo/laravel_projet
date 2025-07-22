@@ -77,7 +77,7 @@ class OrderController extends Controller
             // Créer la commande
             $order = Order::create([
                 'user_id' => auth()->id(),
-                'total' => $total,
+                'total_amount' => $total,
                 'status' => 'pending',
                 'address' => $request->address . ', ' . $request->city . ' ' . $request->postal_code . ' - Tél: ' . $request->phone,
             ]);
@@ -108,6 +108,7 @@ class OrderController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Erreur lors de la création de commande: ' . $e->getMessage());
             return back()->with('error', 'Erreur lors de la création de la commande. Veuillez réessayer.');
         }
     }
@@ -130,7 +131,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = auth()->user()->orders()->with('orderItems.product')->orderBy('created_at', 'desc')->paginate(10);
+        $orders = auth()->user()->orders()->with('items.product')->orderBy('created_at', 'desc')->paginate(10);
         return view('orders.index', compact('orders'));
     }
 }

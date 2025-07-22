@@ -47,7 +47,7 @@
                                     
                                     <div class="text-right">
                                         <div class="text-2xl font-bold text-green-600 dark:text-green-400">
-                                            {{ number_format($order->total, 2) }}€
+                                            {{ number_format($order->total_amount, 2) }}€
                                         </div>
                                         <span class="px-3 py-1 text-sm font-medium rounded-full 
                                             @if($order->status === 'pending') bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
@@ -68,7 +68,7 @@
                                         Produits commandés :
                                     </h4>
                                     <div class="flex flex-wrap gap-2">
-                                        @foreach($order->orderItems as $item)
+                                        @foreach($order->items as $item)
                                             <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm">
                                                 {{ $item->quantity }}x {{ $item->product->name }}
                                             </span>
@@ -87,13 +87,13 @@
                                 </div>
 
                                 <!-- Informations de paiement si payée -->
-                                @if($order->payment_method)
+                                @if($order->payment_intent_id)
                                 <div class="mb-4">
                                     <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-1">
                                         💳 Paiement :
                                     </h4>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">
-                                        {{ $order->payment_method }} - {{ $order->payment_reference }}
+                                        Stripe - {{ $order->payment_intent_id }}
                                         @if($order->paid_at)
                                             <br><span class="text-xs">Payé le {{ $order->paid_at->format('d/m/Y à H:i') }}</span>
                                         @endif
@@ -115,7 +115,7 @@
                                         @endif
                                         
                                         <div class="text-sm text-gray-500">
-                                            {{ $order->orderItems->count() }} produit(s)
+                                            {{ $order->items->count() }} produit(s)
                                         </div>
                                     </div>
                                 </div>

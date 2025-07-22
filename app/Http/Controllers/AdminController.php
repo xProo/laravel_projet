@@ -15,6 +15,7 @@ class AdminController extends Controller
             'total_users' => User::count(),
             'total_products' => Product::count(),
             'total_orders' => Order::count(),
+            'total_revenue' => Order::sum('total_amount'),
             'recent_orders' => Order::with('user')->latest()->take(5)->get(),
             'recent_users' => User::latest()->take(5)->get(),
         ];

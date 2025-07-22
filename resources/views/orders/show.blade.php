@@ -37,22 +37,22 @@
                         <div>
                             <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-2">💰 Total</h4>
                             <p class="text-2xl font-bold text-green-600 dark:text-green-400">
-                                {{ number_format($order->total, 2) }}€
+                                {{ number_format($order->total_amount, 2) }}€
                             </p>
                         </div>
                         
-                        @if($order->payment_method)
+                        @if($order->payment_intent_id)
                         <div>
                             <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-2">💳 Méthode de paiement</h4>
                             <p class="text-gray-600 dark:text-gray-400">
-                                {{ $order->payment_method }}
+                                Stripe
                             </p>
                         </div>
                         
                         <div>
                             <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-2">🔢 Référence de paiement</h4>
                             <p class="text-gray-600 dark:text-gray-400">
-                                {{ $order->payment_reference }}
+                                {{ $order->payment_intent_id }}
                             </p>
                         </div>
                         
@@ -95,7 +95,7 @@
                     </h3>
                     
                     <div class="space-y-4">
-                        @foreach($order->orderItems as $item)
+                        @foreach($order->items as $item)
                             <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                                 <div class="flex items-center space-x-4">
                                     <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-400 rounded-lg flex items-center justify-center">
@@ -129,7 +129,7 @@
                     <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                         <div class="flex justify-between items-center text-lg font-bold text-gray-900 dark:text-gray-100">
                             <span>Total :</span>
-                            <span>{{ number_format($order->total, 2) }}€</span>
+                            <span>{{ number_format($order->total_amount, 2) }}€</span>
                         </div>
                     </div>
                 </div>

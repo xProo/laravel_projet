@@ -18,33 +18,28 @@
                     <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
                         📂 Catégories
                     </x-nav-link>
-                    <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
-                        🛒 Panier
-                        @php
-                            $cartCount = count(session()->get('cart', []));
-                        @endphp
-                        @if($cartCount > 0)
-                            <span class="ml-1 bg-red-500 text-white text-xs rounded-full px-2 py-1">{{ $cartCount }}</span>
-                        @endif
+                    <x-nav-link :href="route('voice-search.demo')" :active="request()->routeIs('voice-search.*')">
+                        🎤 Recherche Vocale
                     </x-nav-link>
                     @auth
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                        <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
-                            📋 Mes commandes
-                        </x-nav-link>
-                        @if(Auth::user()->isAdmin())
-                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
-                            ⚙️ Administration
-                        </x-nav-link>
-                        @endif
+                    
                     @endauth
                 </div>
             </div>
 
             <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <div class="hidden sm:flex sm:items-center sm:ms-6 space-x-4">
+                <!-- Cart Link -->
+                <a href="{{ route('cart.index') }}" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                    🛒 Panier
+                    @php
+                        $cartCount = count(session()->get('cart', []));
+                    @endphp
+                    @if($cartCount > 0)
+                        <span class="ml-1 bg-red-500 text-white text-xs rounded-full px-2 py-1">{{ $cartCount }}</span>
+                    @endif
+                </a>
+
                 @auth
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
@@ -63,6 +58,16 @@
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
+
+                        <x-dropdown-link :href="route('orders.index')">
+                            📋 Mes commandes
+                        </x-dropdown-link>
+
+                        @if(Auth::user()->isAdmin())
+                        <x-dropdown-link :href="route('admin.dashboard')">
+                            ⚙️ Administration
+                        </x-dropdown-link>
+                        @endif
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
@@ -109,27 +114,11 @@
             <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
                 📂 Catégories
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
-                🛒 Panier
-                @php
-                    $cartCount = count(session()->get('cart', []));
-                @endphp
-                @if($cartCount > 0)
-                    <span class="ml-1 bg-red-500 text-white text-xs rounded-full px-2 py-1">{{ $cartCount }}</span>
-                @endif
+            <x-responsive-nav-link :href="route('voice-search.demo')" :active="request()->routeIs('voice-search.*')">
+                🎤 Recherche Vocale
             </x-responsive-nav-link>
             @auth
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
-                    📋 Mes commandes
-                </x-responsive-nav-link>
-                @if(Auth::user()->isAdmin())
-                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
-                    ⚙️ Administration
-                </x-responsive-nav-link>
-                @endif
+            
             @endauth
         </div>
 
@@ -141,10 +130,33 @@
                 <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
             </div>
 
+            <!-- Cart Link for Mobile -->
+            <div class="px-4 py-2">
+                <a href="{{ route('cart.index') }}" class="flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                    🛒 Panier
+                    @php
+                        $cartCount = count(session()->get('cart', []));
+                    @endphp
+                    @if($cartCount > 0)
+                        <span class="ml-1 bg-red-500 text-white text-xs rounded-full px-2 py-1">{{ $cartCount }}</span>
+                    @endif
+                </a>
+            </div>
+
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('orders.index')">
+                    📋 Mes commandes
+                </x-responsive-nav-link>
+
+                @if(Auth::user()->isAdmin())
+                <x-responsive-nav-link :href="route('admin.dashboard')">
+                    ⚙️ Administration
+                </x-responsive-nav-link>
+                @endif
 
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">

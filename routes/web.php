@@ -13,13 +13,15 @@ Route::get('/', function () {
     return redirect()->route('products.index');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
 
 // Routes publiques pour les produits et catégories
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/api/products/search', [ProductController::class, 'search'])->name('api.products.search');
+Route::get('/voice-search-demo', function() {
+    return view('voice-search-demo');
+})->name('voice-search.demo');
 Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
 Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
 

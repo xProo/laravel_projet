@@ -38,6 +38,25 @@
                 </div>
             </div>
 
+            <!-- Barre de recherche avec recherche vocale -->
+            <div class="mb-6 search-container relative">
+                <div class="flex items-center gap-4">
+                    <div class="flex-1 relative">
+                        <input type="text" 
+                               id="search-input" 
+                               placeholder="Rechercher un produit..." 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <!-- Le bouton de recherche vocale sera ajouté ici par JavaScript -->
+                </div>
+                <!-- Les résultats de recherche vocale apparaîtront ici -->
+            </div>
+
             <!-- Grille des produits -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach($products as $product)
@@ -106,4 +125,7 @@
             </div>
         </div>
     </div>
+
+    <!-- Script de recherche vocale -->
+    <script src="{{ asset('js/voice-search.js') }}"></script>
 </x-app-layout> 

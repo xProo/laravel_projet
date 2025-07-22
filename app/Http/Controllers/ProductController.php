@@ -137,4 +137,38 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with('success', 'Produit supprimé avec succès !');
     }
+
+    /**
+     * Search products by name or description
+     */
+    public function search(Request $request)
+    {
+        $query = $request->get('q', '');
+        
+        if (empty($query)) {
+            return response()->json(['products' => []]);
+        }
+
+        $products = Product::with('category')
+            ->where('name', 'LIKE', "%{$query}%")
+            ->orWhere('description', 'LIKE', "%{$query}%")
+            ->orWhereHas('category', function($q) use ($query) {
+                $q->where('name', 'LIKE', "%{$query}%");
+            })
+            ->limit(10)
+            ->get()
+            ->map(function($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'description' => $product->description,
+                    'price' => number_format($product->price, 2),
+                    'category' => $product->category->name,
+                    'url' => route('products.show', $product),
+                    'stock' => $product->stock
+                ];
+            });
+
+        return response()->json(['products' => $products]);
+    }
 }

@@ -14,6 +14,12 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::with('category')->paginate(12);
+        
+        // Si on est dans l'admin, utiliser la vue admin
+        if (request()->routeIs('admin.*')) {
+            return view('admin.products.index', compact('products'));
+        }
+        
         return view('products.index', compact('products'));
     }
 
@@ -23,6 +29,12 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::all();
+        
+        // Si on est dans l'admin, utiliser la vue admin
+        if (request()->routeIs('admin.*')) {
+            return view('admin.products.create', compact('categories'));
+        }
+        
         return view('products.create', compact('categories'));
     }
 
@@ -49,6 +61,11 @@ class ProductController extends Controller
 
         Product::create($data);
 
+        // Rediriger vers la bonne route selon le contexte
+        if (request()->routeIs('admin.*')) {
+            return redirect()->route('admin.products.index')->with('success', 'Produit créé avec succès !');
+        }
+
         return redirect()->route('products.index')->with('success', 'Produit créé avec succès !');
     }
 
@@ -66,6 +83,12 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::all();
+        
+        // Si on est dans l'admin, utiliser la vue admin
+        if (request()->routeIs('admin.*')) {
+            return view('admin.products.edit', compact('product', 'categories'));
+        }
+        
         return view('products.edit', compact('product', 'categories'));
     }
 
@@ -92,6 +115,11 @@ class ProductController extends Controller
 
         $product->update($data);
 
+        // Rediriger vers la bonne route selon le contexte
+        if (request()->routeIs('admin.*')) {
+            return redirect()->route('admin.products.index')->with('success', 'Produit mis à jour avec succès !');
+        }
+
         return redirect()->route('products.index')->with('success', 'Produit mis à jour avec succès !');
     }
 
@@ -101,6 +129,12 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         $product->delete();
+        
+        // Rediriger vers la bonne route selon le contexte
+        if (request()->routeIs('admin.*')) {
+            return redirect()->route('admin.products.index')->with('success', 'Produit supprimé avec succès !');
+        }
+
         return redirect()->route('products.index')->with('success', 'Produit supprimé avec succès !');
     }
 }
